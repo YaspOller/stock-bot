@@ -33,7 +33,7 @@ def is_in_stock(html, selector, match_text):
         return False
     # Knappen findes → antages på lager
 
-        await send_discord_message(MTQzNzIyNjU4NTE5ODY5MDQ2MA.G3uDgW.9UIal65VG6hvQG7sSDpxfs95PbKHfZOwFxm7VY, CHANNEL_ID, msg)
+        await send_discord_message(DISCORD_TOKEN, CHANNEL_ID, msg)
 
 if __name__ == "__main__":
     asyncio.run(main())
