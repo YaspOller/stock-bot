@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 PRODUCTS = [
     {
         "name": "Poke-Shop",
-        "url": "https://www.poke-shop.dk/products/pokemon-tcg-mega-charizard-ultra-premium-collection",
+        "url": "https://www.poke-shop.dk/products/forudbestilling-pokemon-premium-checklane-blister-pakke-mega-evolution",
         "css_selector": "button.product-form__submit",  # 'Tilføj til kurv'-knap
     },
     {
