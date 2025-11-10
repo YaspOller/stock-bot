@@ -14,12 +14,12 @@ PRODUCTS = [
     {
         "name": "MaxGaming",
         "url": "https://www.maxgaming.dk/dk/pokemon/pokemon-mega-charizard-ex-ultra-premium-samling?srsltid=AfmBOopEFVqC5LulItCCoeEDTNQp_vfctd-wy3rn70__XnR0rgj_tQw2mB4",
-        "css_selector": "button",  # bredt valgt – de bruger typisk en standard "btn"-knap
+        "css_selector": "button",
     },
     {
         "name": "MuggleAlley",
         "url": "https://www.mugglealley.dk/shop/239-pokemon-kort/1868-premium-blister-me01/",
-        "css_selector": "",  # ikke nødvendig, vi tjekker via statisk tekst
+        "css_selector": "",  # vi bruger .button-primary
     },
 ]
 
@@ -39,10 +39,20 @@ async def fetch_html(url):
 
 def is_in_stock(html, selector, site_name):
     soup = BeautifulSoup(html, "html.parser")
-    text = soup.get_text().lower()
+
+    # ---- POKE-SHOP ----
+    if site_name == "Poke-Shop":
+        element = soup.select_one(selector)
+        if not element:
+            return False
+        t = element.get_text(strip=True).lower()
+        if "kurv" in t and "udsolgt" not in t:
+            return True
+        return False
 
     # ---- MAXGAMING ----
-    if site_name == "MaxGaming":
+    elif site_name == "MaxGaming":
+        text = soup.get_text().lower()
         if "tilgængelighed" in text:
             if "0 tilbage" in text or "kommer snart" in text:
                 return False
@@ -56,20 +66,8 @@ def is_in_stock(html, selector, site_name):
 
     # ---- MUGGLEALLEY ----
     elif site_name == "MuggleAlley":
-        # Statisk tekst tjek
-        if "udsolgt" in text or "forudbestilling" in text or "kommer snart" in text:
-            return False
-        if "på lager" in text:
-            return True
-        return False
-
-    # ---- POKE-SHOP ----
-    elif site_name == "Poke-Shop":
-        element = soup.select_one(selector)
-        if not element:
-            return False
-        t = element.get_text(strip=True).lower()
-        if "kurv" in t and "udsolgt" not in t:
+        # Tjek om der findes en knap med class "button-primary"
+        if soup.select_one("button.button-primary"):
             return True
         return False
 
@@ -95,16 +93,4 @@ async def check_product(site):
     try:
         html = await fetch_html(site["url"])
         if is_in_stock(html, site.get("css_selector", ""), site["name"]):
-            msg = f"**{site['name']}** har produktet på lager! 🔥\n{site['url']}"
-            print(msg)
-            await send_webhook(msg)
-        else:
-            print(f"{site['name']}: Produkt ikke på lager.")
-    except Exception as e:
-        print(f"⚠️ Fejl ved check af {site['name']}: {e}")
-
-async def main():
-    await asyncio.gather(*(check_product(site) for site in PRODUCTS))
-
-if __name__ == "__main__":
-    asyncio.run(main())
+            m
