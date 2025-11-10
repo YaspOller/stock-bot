@@ -1,19 +1,19 @@
-import os
 import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 
-# Miljøvariabler / GitHub secrets
-PRODUCT_URL = os.getenv("PRODUCT_URL")
-CSS_SELECTOR = os.getenv("CSS_SELECTOR")
-WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
-USER_ID = os.getenv("DISCORD_USER_ID")  # Discord bruger-ID til mention
-USER_AGENT = os.getenv("USER_AGENT", "Mozilla/5.0 (compatible; StockChecker/1.0)")
+# -------------------------------
+# Hardcoded værdier – ingen secrets
+# -------------------------------
+PRODUCT_URL = "https://www.poke-shop.dk/products/pokemon-tcg-mega-charizard-ultra-premium-collection"
+CSS_SELECTOR = "button.product-form__submit"
+WEBHOOK_URL = "https://discord.com/api/webhooks/DIT_WEBHOOK_URL_HER"
+USER_ID = "DIT_DISCORD_USER_ID_HER"  # Tal, fx 123456789012345678
+USER_AGENT = "Mozilla/5.0 (compatible; StockChecker/1.0)"
 
-if not (PRODUCT_URL and CSS_SELECTOR and WEBHOOK_URL and USER_ID):
-    print("Manglende miljøvariabler! Tjek at secrets er sat korrekt.")
-    raise SystemExit(1)
-
+# --------------------------------
+# Script
+# --------------------------------
 async def fetch_html(url):
     headers = {"User-Agent": USER_AGENT}
     async with aiohttp.ClientSession() as session:
