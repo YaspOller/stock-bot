@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 # -------------------------------
 # Hardcoded værdier – ingen secrets
 # -------------------------------
-PRODUCT_URL = "https://www.poke-shop.dk/products/pokemon-tcg-mega-charizard-ultra-premium-collection"
+PRODUCT_URL = "https://www.poke-shop.dk/products/forudbestilling-pokemon-premium-checklane-blister-pakke-mega-evolution"
 CSS_SELECTOR = "button.product-form__submit"
 WEBHOOK_URL = "https://discord.com/api/webhooks/1437232833906344010/jzgbDoY52k95VCgpL5j_cUPF-ZX0HuhjJ7SKHa6uEJEjDcFzoDc7zfrU9t6JOy2aq4u1"
 USER_ID = "286567812510777345"  # Tal, fx 123456789012345678
