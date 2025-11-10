@@ -3,7 +3,7 @@ import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 
-PRODUCT_URL = os.getenv("PRODUCT_URL2")
+PRODUCT_URL = os.getenv("PRODUCT_URL")
 CSS_SELECTOR = os.getenv("CSS_SELECTOR")
 WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 USER_AGENT = os.getenv("USER_AGENT", "Mozilla/5.0 (compatible; StockChecker/1.0)")
@@ -41,6 +41,7 @@ async def main():
         await send_webhook(msg)
     else:
         print("Produkt ikke på lager.")
+        await send_webhook("Ikke på lager @alegerhomo")
 
 if __name__ == "__main__":
     asyncio.run(main())
