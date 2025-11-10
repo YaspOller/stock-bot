@@ -1,6 +1,7 @@
-import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
+from playwright.async_api import async_playwright
+import aiohttp
 
 # ---------------------------------
 # PRODUKTER
@@ -10,16 +11,19 @@ PRODUCTS = [
         "name": "Poke-Shop",
         "url": "https://www.poke-shop.dk/products/pokemon-tcg-mega-charizard-ultra-premium-collection",
         "css_selector": "button.product-form__submit",
+        "type": "aiohttp"
     },
     {
         "name": "MaxGaming",
         "url": "https://www.maxgaming.dk/dk/pokemon/pokemon-mega-charizard-ex-ultra-premium-samling?srsltid=AfmBOopEFVqC5LulItCCoeEDTNQp_vfctd-wy3rn70__XnR0rgj_tQw2mB4",
-        "css_selector": "button",  # bredt valgt – de bruger typisk en standard "btn"-knap
+        "css_selector": "button",
+        "type": "aiohttp"
     },
     {
         "name": "MuggleAlley",
         "url": "https://www.mugglealley.dk/shop/239-pokemon-kort/1868-premium-blister-me01/",
         "css_selector": "button.single_add_to_cart_button, button.add_to_cart_button, input[type='submit'].single_add_to_cart_button",
+        "type": "playwright"
     },
 ]
 
@@ -30,16 +34,25 @@ USER_AGENT = "Mozilla/5.0 (compatible; StockChecker/1.0)"
 # ---------------------------------
 # HJÆLPEFUNKTIONER
 # ---------------------------------
-async def fetch_html(url):
+async def fetch_html_aiohttp(url):
     headers = {"User-Agent": USER_AGENT}
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers, timeout=30) as resp:
             resp.raise_for_status()
             return await resp.text()
 
+async def fetch_html_playwright(url):
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
+        await page.goto(url)
+        await asyncio.sleep(2)  # Vent lidt for JS
+        html = await page.content()
+        await browser.close()
+        return html
+
 def is_in_stock(html, selector, site_name):
     soup = BeautifulSoup(html, "html.parser")
-
     text = soup.get_text().lower()
 
     # ---- MAXGAMING ----
@@ -57,14 +70,9 @@ def is_in_stock(html, selector, site_name):
 
     # ---- MUGGLEALLEY ----
     elif site_name == "MuggleAlley":
-        # Debug: print html snippet for at finde knapper
-        # print("DEBUG MuggleAlley HTML snippet:", html[:500])
-
-        # Check alle relevante knapper
         for el in soup.select(selector):
             t = el.get_text(strip=True).lower()
             if ("læg i kurv" in t or "tilføj til kurv" in t or "køb" in t):
-                # Check at der ikke står udsolgt eller forudbestilling
                 if "udsolgt" in text or "forudbestilling" in text or "kommer snart" in text:
                     return False
                 return True
@@ -100,7 +108,11 @@ async def send_webhook(message):
 # ---------------------------------
 async def check_product(site):
     try:
-        html = await fetch_html(site["url"])
+        if site.get("type") == "playwright":
+            html = await fetch_html_playwright(site["url"])
+        else:
+            html = await fetch_html_aiohttp(site["url"])
+
         if is_in_stock(html, site["css_selector"], site["name"]):
             msg = f"**{site['name']}** har produktet på lager! 🔥\n{site['url']}"
             print(msg)
