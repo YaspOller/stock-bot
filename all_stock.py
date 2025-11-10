@@ -19,7 +19,7 @@ PRODUCTS = [
     {
         "name": "MuggleAlley",
         "url": "https://www.mugglealley.dk/shop/239-pokemon-kort/1839-upc-mega-charizard-x-ex/?srsltid=AfmBOopcr3DWezrAjsTQOgKQrozKSL8OFSaocIifp3ZjmrHNukjBFcMr7-g",
-        "css_selector": "",  # vi bruger .button-primary + tekst check
+        "css_selector": "button",  # vi bruger .button-primary + tekst check
     },
 ]
 
