@@ -8,17 +8,17 @@ from bs4 import BeautifulSoup
 PRODUCTS = [
     {
         "name": "Poke-Shop",
-        "url": "https://www.poke-shop.dk/products/pokemon-tcg-mega-charizard-ultra-premium-collection",
+        "url": "https://www.poke-shop.dk/products/pokemon-tyranitar-ex-premium-collection?pr_prod_strat=e5_desc&pr_rec_id=e98ec1b67&pr_rec_pid=14839749181766&pr_ref_pid=15202939568454&pr_seq=uniform",
         "css_selector": "button.product-form__submit",
     },
     {
         "name": "MaxGaming",
-        "url": "https://www.maxgaming.dk/dk/pokemon/pokemon-mega-charizard-ex-ultra-premium-samling?srsltid=AfmBOopEFVqC5LulItCCoeEDTNQp_vfctd-wy3rn70__XnR0rgj_tQw2mB4",
+        "url": "https://www.maxgaming.dk/dk/pokemon/jolteon-vmax-gift-box",
         "css_selector": "button",  # bredt valgt – de bruger typisk en standard "btn"-knap
     },
     {
         "name": "MuggleAlley",
-        "url": "https://www.mugglealley.dk/shop/239-pokemon-kort/1839-upc-mega-charizard-x-ex/?srsltid=AfmBOopcr3DWezrAjsTQOgKQrozKSL8OFSaocIifp3ZjmrHNukjBFcMr7-g",
+        "url": "https://www.mugglealley.dk/shop/239-pokemon-kort/1868-premium-blister-me01/",
         "css_selector": "button.single_add_to_cart_button",  # typisk class for 'Læg i kurv' knap på WooCommerce
     },
 ]
