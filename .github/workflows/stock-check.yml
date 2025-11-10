@@ -3,6 +3,7 @@ name: Stock check direct
 on:
   schedule:
     - cron: '*/5 * * * *'
+  workflow_dispatch:
  
 
 jobs:
@@ -17,4 +18,4 @@ jobs:
       - name: Install dependencies
         run: pip install aiohttp beautifulsoup4
       - name: Run stock check
-        run: python check_stock_webhook.py
+        run: python all_stock.py
