@@ -46,7 +46,7 @@ async def main():
         await send_webhook(msg)
     else:
         print("Produkt ikke på lager.")
-        await send_webhook("nahh")
+        
         
 
 if __name__ == "__main__":
