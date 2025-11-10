@@ -93,4 +93,4 @@ async def check_product(site):
     try:
         html = await fetch_html(site["url"])
         if is_in_stock(html, site.get("css_selector", ""), site["name"]):
-            m
+            
