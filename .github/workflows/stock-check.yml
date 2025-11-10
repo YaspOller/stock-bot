@@ -1,4 +1,4 @@
-name: Stock check with mention
+name: Stock check direct
 
 on:
   schedule:
@@ -10,19 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-
       - name: Install dependencies
         run: pip install aiohttp beautifulsoup4
-
       - name: Run stock check
-        env:
-          PRODUCT_URL: ${{ secrets.PRODUCT_URL }}
-          CSS_SELECTOR: ${{ secrets.CSS_SELECTOR }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          USER_ID: ${{ secrets.DISCORD_USER_ID }}
         run: python check_stock_webhook.py
