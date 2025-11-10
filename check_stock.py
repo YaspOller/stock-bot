@@ -3,12 +3,14 @@ import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 
+# Miljøvariabler / GitHub secrets
 PRODUCT_URL = os.getenv("PRODUCT_URL")
 CSS_SELECTOR = os.getenv("CSS_SELECTOR")
 WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
+USER_ID = os.getenv("DISCORD_USER_ID")  # Discord bruger-ID til mention
 USER_AGENT = os.getenv("USER_AGENT", "Mozilla/5.0 (compatible; StockChecker/1.0)")
 
-if not (PRODUCT_URL and CSS_SELECTOR and WEBHOOK_URL):
+if not (PRODUCT_URL and CSS_SELECTOR and WEBHOOK_URL and USER_ID):
     print("Manglende miljøvariabler! Tjek at secrets er sat korrekt.")
     raise SystemExit(1)
 
@@ -25,10 +27,13 @@ def is_in_stock(html, selector):
 
 async def send_webhook(message):
     async with aiohttp.ClientSession() as session:
-        payload = {"content": message}
+        payload = {
+            "content": f"<@{USER_ID}> {message}",
+            "allowed_mentions": {"users": [int(USER_ID)]}  # tillad mention
+        }
         async with session.post(WEBHOOK_URL, json=payload) as resp:
             if resp.status in (200, 204):
-                print("Besked sendt til Discord via webhook!")
+                print("Besked sendt til Discord med mention!")
             else:
                 text = await resp.text()
                 print(f"Fejl ved afsendelse: {resp.status} - {text}")
@@ -41,7 +46,7 @@ async def main():
         await send_webhook(msg)
     else:
         print("Produkt ikke på lager.")
-        await send_webhook("Ikke på lager @alegerhomo")
+        await send_webhook(f"Produkt ikke på lager")
 
 if __name__ == "__main__":
     asyncio.run(main())
