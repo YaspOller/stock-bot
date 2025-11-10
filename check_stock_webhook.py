@@ -46,7 +46,7 @@ async def main():
         await send_webhook(msg)
     else:
         print("Produkt ikke på lager.")
-        await send_webhook("Ikke på lager")
+        
 
 if __name__ == "__main__":
     asyncio.run(main())
