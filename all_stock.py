@@ -19,7 +19,7 @@ PRODUCTS = [
     {
         "name": "MuggleAlley",
         "url": "https://www.mugglealley.dk/shop/239-pokemon-kort/1868-premium-blister-me01/",
-        "css_selector": "",  # vi bruger .button-primary
+        "css_selector": "",  # Vi bruger .button-primary
     },
 ]
 
@@ -93,4 +93,16 @@ async def check_product(site):
     try:
         html = await fetch_html(site["url"])
         if is_in_stock(html, site.get("css_selector", ""), site["name"]):
-            
+            msg = f"**{site['name']}** har produktet på lager! 🔥\n{site['url']}"
+            print(msg)
+            await send_webhook(msg)
+        else:
+            print(f"{site['name']}: Produkt ikke på lager.")
+    except Exception as e:
+        print(f"⚠️ Fejl ved check af {site['name']}: {e}")
+
+async def main():
+    await asyncio.gather(*(check_product(site) for site in PRODUCTS))
+
+if __name__ == "__main__":
+    asyncio.run(main())
