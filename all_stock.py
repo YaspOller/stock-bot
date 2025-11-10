@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 PRODUCTS = [
     {
         "name": "Poke-Shop",
-        "url": "https://www.poke-shop.dk/products/pokemon-tyranitar-ex-premium-collection?pr_prod_strat=e5_desc&pr_rec_id=e98ec1b67&pr_rec_pid=14839749181766&pr_ref_pid=15202939568454&pr_seq=uniform",
+        "url": "https://www.poke-shop.dk/products/pokemon-tcg-mega-charizard-ultra-premium-collection",
         "css_selector": "button.product-form__submit",
     },
     {
