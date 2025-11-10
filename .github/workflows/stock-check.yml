@@ -18,8 +18,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install aiohttp beautifulsoup4 playwright
-          playwright install
+          pip install aiohttp beautifulsoup4
+          
 
       - name: Run stock check
         run: python all_stock.py
