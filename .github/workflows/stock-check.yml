@@ -4,18 +4,22 @@ on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
- 
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
       - name: Install dependencies
-        run: pip install aiohttp beautifulsoup4
+        run: |
+          pip install aiohttp beautifulsoup4 playwright
+          playwright install
+
       - name: Run stock check
         run: python all_stock.py
