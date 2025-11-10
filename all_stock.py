@@ -13,7 +13,7 @@ PRODUCTS = [
     },
     {
         "name": "MaxGaming",
-        "url": "https://www.maxgaming.dk/dk/pokemon/jolteon-vmax-gift-box",
+        "url": "https://www.maxgaming.dk/dk/pokemon/pokemon-mega-charizard-ex-ultra-premium-samling?srsltid=AfmBOopEFVqC5LulItCCoeEDTNQp_vfctd-wy3rn70__XnR0rgj_tQw2mB4",
         "css_selector": "button",  # bredt valgt – de bruger typisk en standard "btn"-knap
     },
 ]
