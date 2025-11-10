@@ -18,8 +18,8 @@ PRODUCTS = [
     },
     {
         "name": "MuggleAlley",
-        "url": "https://www.mugglealley.dk/shop/239-pokemon-kort/1839-upc-mega-charizard-x-ex/?srsltid=AfmBOopcr3DWezrAjsTQOgKQrozKSL8OFSaocIifp3ZjmrHNukjBFcMr7-g",
-        "css_selector": "",  # Vi bruger .button-primary
+        "url": "https://www.mugglealley.dk/shop/239-pokemon-kort/1868-premium-blister-me01/",
+        "css_selector": "",  # vi bruger .button-primary + tekst check
     },
 ]
 
@@ -39,6 +39,7 @@ async def fetch_html(url):
 
 def is_in_stock(html, selector, site_name):
     soup = BeautifulSoup(html, "html.parser")
+    text = soup.get_text().lower()
 
     # ---- POKE-SHOP ----
     if site_name == "Poke-Shop":
@@ -52,7 +53,6 @@ def is_in_stock(html, selector, site_name):
 
     # ---- MAXGAMING ----
     elif site_name == "MaxGaming":
-        text = soup.get_text().lower()
         if "tilgængelighed" in text:
             if "0 tilbage" in text or "kommer snart" in text:
                 return False
@@ -66,7 +66,10 @@ def is_in_stock(html, selector, site_name):
 
     # ---- MUGGLEALLEY ----
     elif site_name == "MuggleAlley":
-        # Tjek om der findes en knap med class "button-primary"
+        # 1️⃣ Tjek for negativ tekst først
+        if any(x in text for x in ["udsolgt", "forudbestilling", "kommer snart","ikke på lager"]):
+            return False
+        # 2️⃣ Tjek om der findes en knap med class "button-primary"
         if soup.select_one("button.button-primary"):
             return True
         return False
