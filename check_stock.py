@@ -2,22 +2,15 @@ import os
 import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
-import discord
 
-# Miljøvariabler fra GitHub secrets
 PRODUCT_URL = os.getenv("PRODUCT_URL")
 CSS_SELECTOR = os.getenv("CSS_SELECTOR")
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))  # Channel ID skal være integer
+WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 USER_AGENT = os.getenv("USER_AGENT", "Mozilla/5.0 (compatible; StockChecker/1.0)")
 
-if not (PRODUCT_URL and CSS_SELECTOR and DISCORD_TOKEN and CHANNEL_ID):
-    print("Manglende miljøvariabler! Tjek at alle secrets er sat korrekt.")
+if not (PRODUCT_URL and CSS_SELECTOR and WEBHOOK_URL):
+    print("Manglende miljøvariabler! Tjek at secrets er sat korrekt.")
     raise SystemExit(1)
-
-# Discord client
-intents = discord.Intents.default()
-client = discord.Client(intents=intents)
 
 async def fetch_html(url):
     headers = {"User-Agent": USER_AGENT}
@@ -30,22 +23,22 @@ def is_in_stock(html, selector):
     soup = BeautifulSoup(html, "html.parser")
     return bool(soup.select_one(selector))
 
-async def send_discord_message(token, channel_id, message):
-    intents = discord.Intents.default()
-    async with discord.Client(intents=intents) as bot:
-        await bot.login(token)
-        channel = bot.get_channel(channel_id)
-        if channel:
-            await channel.send(message)
-        else:
-            print("Kunne ikke finde Discord-kanalen. Tjek CHANNEL_ID.")
+async def send_webhook(message):
+    async with aiohttp.ClientSession() as session:
+        payload = {"content": message}
+        async with session.post(WEBHOOK_URL, json=payload) as resp:
+            if resp.status in (200, 204):
+                print("Besked sendt til Discord via webhook!")
+            else:
+                text = await resp.text()
+                print(f"Fejl ved afsendelse: {resp.status} - {text}")
 
 async def main():
     html = await fetch_html(PRODUCT_URL)
     if is_in_stock(html, CSS_SELECTOR):
         msg = f"**Produkt på lager:** {PRODUCT_URL}"
         print(msg)
-        await send_discord_message(DISCORD_TOKEN, CHANNEL_ID, msg)
+        await send_webhook(msg)
     else:
         print("Produkt ikke på lager.")
 
