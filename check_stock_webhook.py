@@ -29,7 +29,7 @@ async def send_webhook(message):
     async with aiohttp.ClientSession() as session:
         payload = {
             "content": f"<@{USER_ID}> {message}",
-            "allowed_mentions": {"users": [int(USER_ID)]}  # tillad mention
+            "allowed_mentions": {"users": [int(USER_ID)]}
         }
         async with session.post(WEBHOOK_URL, json=payload) as resp:
             if resp.status in (200, 204):
@@ -46,7 +46,6 @@ async def main():
         await send_webhook(msg)
     else:
         print("Produkt ikke på lager.")
-        await send_webhook(f"Produkt ikke på lager")
 
 if __name__ == "__main__":
     asyncio.run(main())
