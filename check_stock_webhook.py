@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup
 # -------------------------------
 PRODUCT_URL = "https://www.poke-shop.dk/products/pokemon-tcg-mega-charizard-ultra-premium-collection"
 CSS_SELECTOR = "button.product-form__submit"
-WEBHOOK_URL = "https://discord.com/api/webhooks/DIT_WEBHOOK_URL_HER"
-USER_ID = "DIT_DISCORD_USER_ID_HER"  # Tal, fx 123456789012345678
+WEBHOOK_URL = "https://discord.com/api/webhooks/1437232833906344010/jzgbDoY52k95VCgpL5j_cUPF-ZX0HuhjJ7SKHa6uEJEjDcFzoDc7zfrU9t6JOy2aq4u1"
+USER_ID = "286567812510777345"  # Tal, fx 123456789012345678
 USER_AGENT = "Mozilla/5.0 (compatible; StockChecker/1.0)"
 
 # --------------------------------
