@@ -1,4 +1,4 @@
-name: Stock check
+name: Stock check with mention
 
 on:
   schedule:
@@ -15,12 +15,11 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install aiohttp beautifulsoup4
+        run: pip install aiohttp beautifulsoup4
       - name: Run stock check
         env:
           PRODUCT_URL: ${{ secrets.PRODUCT_URL }}
           CSS_SELECTOR: ${{ secrets.CSS_SELECTOR }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python check_stock.py
+          USER_ID: ${{ secrets.DISCORD_USER_ID }}
+        run: python check_stock_webhook.py
