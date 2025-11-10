@@ -2,19 +2,16 @@ import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 
-# -------------------------------
-# Hardcoded værdier – ingen secrets
-# -------------------------------
 PRODUCTS = [
     {
         "name": "Poke-Shop",
-        "url": "https://www.poke-shop.dk/products/forudbestilling-pokemon-premium-checklane-blister-pakke-mega-evolution",
-        "css_selector": "button.product-form__submit",  # 'Tilføj til kurv'-knap
+        "url": "https://www.poke-shop.dk/products/pokemon-tyranitar-ex-premium-collection?pr_prod_strat=e5_desc&pr_rec_id=e98ec1b67&pr_rec_pid=14839749181766&pr_ref_pid=15202939568454&pr_seq=uniform",
+        "css_selector": "button.product-form__submit",
     },
     {
         "name": "MaxGaming",
         "url": "https://www.maxgaming.dk/dk/pokemon/jolteon-vmax-gift-box",
-        "css_selector": "button.buy-button",  # Knappen på MaxGaming (kan justeres hvis forkert)
+        "css_selector": "button, a",  # bredt — tjekker alle knapper og links
     },
 ]
 
@@ -22,9 +19,6 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1437232833906344010/jzgbDoY52k95
 USER_ID = "286567812510777345"
 USER_AGENT = "Mozilla/5.0 (compatible; StockChecker/1.0)"
 
-# --------------------------------
-# Hjælpefunktioner
-# --------------------------------
 async def fetch_html(url):
     headers = {"User-Agent": USER_AGENT}
     async with aiohttp.ClientSession() as session:
@@ -32,19 +26,24 @@ async def fetch_html(url):
             resp.raise_for_status()
             return await resp.text()
 
-def is_in_stock(html, selector):
+def is_in_stock(html, selector, site_name):
     soup = BeautifulSoup(html, "html.parser")
-    element = soup.select_one(selector)
-    if not element:
-        return False
+    elements = soup.select(selector)
 
-    # For ekstra robusthed – tjek om knappen IKKE er disabled
-    if element.has_attr("disabled"):
-        return False
-    text = element.get_text(strip=True).lower()
-    if "udsolgt" in text or "ikke på lager" in text:
-        return False
-    return True
+    for el in elements:
+        text = el.get_text(strip=True).lower()
+
+        # MaxGaming-specifikt tjek
+        if site_name == "MaxGaming":
+            if "tilføj" in text or "lægg" in text:
+                return True
+
+        # Poke-Shop
+        if site_name == "Poke-Shop":
+            if "kurv" in text and "udsolgt" not in text:
+                return True
+
+    return False
 
 async def send_webhook(message):
     async with aiohttp.ClientSession() as session:
@@ -59,12 +58,9 @@ async def send_webhook(message):
                 text = await resp.text()
                 print(f"Fejl ved afsendelse: {resp.status} - {text}")
 
-# --------------------------------
-# Hovedfunktion
-# --------------------------------
 async def check_product(site):
     html = await fetch_html(site["url"])
-    if is_in_stock(html, site["css_selector"]):
+    if is_in_stock(html, site["css_selector"], site["name"]):
         msg = f"**{site['name']}** har produktet på lager! 🔥\n{site['url']}"
         print(msg)
         await send_webhook(msg)
@@ -72,8 +68,7 @@ async def check_product(site):
         print(f"{site['name']}: Produkt ikke på lager.")
 
 async def main():
-    tasks = [check_product(site) for site in PRODUCTS]
-    await asyncio.gather(*tasks)
+    await asyncio.gather(*(check_product(site) for site in PRODUCTS))
 
 if __name__ == "__main__":
     asyncio.run(main())
